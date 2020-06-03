@@ -1,0 +1,85 @@
+html, body {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url('../images/starryBackground.jpg');
+  background-size: cover;
+  color: #ffffff;
+  font-family: 'Roboto', sans-serif;
+  font-size: 8rem;
+  z-index: 1;
+  padding: 1rem;
+}
+
+#demo-canvas {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+
+.App {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.stream-link {
+  font-size: 4rem;
+  z-index: 100;
+  text-align: center;
+  padding: 2rem;
+}
+
+.stream-link a, .stream-link a:active, .stream-link a:visited, .stream-link a:link  {
+  text-decoration: none;
+  color: #ffffff;
+  text-align: center;
+}
+
+.stream-link a:hover {
+  cursor: pointer;
+  text-align: center;
+}
+
+.launch-date {
+  text-align: center;
+  z-index: 100;
+}
+
+.google-login {
+  z-index: 100;
+}
+
+@media only screen and (max-width: 900px) {
+  #root {
+    font-size: 3rem;
+  }
+
+  .stream-link {
+    font-size: 2rem;
+  }
+}
+
+#tsparticles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
