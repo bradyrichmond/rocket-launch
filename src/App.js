@@ -19,8 +19,11 @@ class App extends React.Component {
     launch: {
       company: 'SpaceX',
       streamUrl: 'https://www.youtube.com/embed/y4xBFHjkUvw',
-      launchTime: "2020-06-04 01:25",
-      crewed: false
+      launchTime: "2020-06-04 02:25",
+      booster: 'Falcon 9',
+      payload: 'Starlink Satellites',
+      crewed: false,
+      estimated: false
     }
   }
 
@@ -41,8 +44,12 @@ class App extends React.Component {
 
   setDisplayTime = () => {
     let display = moment(this.state.launch.launchTime).utc().diff(moment().utc());
-    // let displayTime = `${moment(display).format("DD") - 1} days ${moment(display).format("HH:mm:ss")}`;
-    let displayTime = this.formatDisplayTime(display);
+    let displayTime;
+    if (display < 0) {
+      displayTime = "happening now!";
+    } else {
+      displayTime = this.formatDisplayTime(display);
+    }
     this.setState({displayTime});
   }
 
@@ -52,11 +59,13 @@ class App extends React.Component {
     let minutes = moment(time).format("mm");
     let seconds = moment(time).format("ss");
     if (days < 1) {
-      return `${hours}h${minutes}m${seconds}s`
+      return `in ${hours}h${minutes}m${seconds}s`
     } else if (days === 1) {
-      return `1d ${hours}h ${minutes}m ${seconds}s`
+      return `in 1d ${hours}h ${minutes}m ${seconds}s`
+    } else if (seconds < 1) {
+
     } else {
-      return `${days}d ${hours}h ${minutes}m ${seconds}s`
+      return `in ${days}d ${hours}h ${minutes}m ${seconds}s`
     }
   }
 
@@ -93,7 +102,7 @@ class App extends React.Component {
         <Router>
           <Switch>
               <Route exact path="/">
-                <div className='launch-date'>{this.state.crewed ? 'Crewed' : ''}{this.state.launch.company} launch in {this.state.displayTime}</div>
+                <div className='launch-date'>Next launch {this.state.displayTime}</div>
                 {this.state.launch && this.state.launch.streamUrl &&
                   <div className='stream-link'>
                     <iframe
