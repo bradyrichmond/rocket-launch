@@ -18,8 +18,8 @@ class App extends React.Component {
     cookies: null,
     launch: {
       company: 'SpaceX',
-      streamUrl: false,
-      launchTime: "2020-06-04 00:55",
+      streamUrl: 'https://www.youtube.com/embed/y4xBFHjkUvw',
+      launchTime: "2020-06-04 01:25",
       crewed: false
     }
   }
