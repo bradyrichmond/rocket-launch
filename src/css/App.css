@@ -18,7 +18,7 @@ html, body {
   background-size: cover;
   color: #ffffff;
   font-family: 'Roboto', sans-serif;
-  font-size: 8rem;
+  font-size: 6rem;
   z-index: 1;
   padding: 1rem;
 }
@@ -62,6 +62,11 @@ html, body {
   z-index: 100;
 }
 
+.launch-data {
+  font-size: 4rem;
+  z-index: 100; 
+}
+
 .google-login {
   z-index: 100;
 }
@@ -73,6 +78,10 @@ html, body {
 
   .stream-link {
     font-size: 2rem;
+  }
+
+  .launch-data {
+    font-size: 1rem;
   }
 }
 

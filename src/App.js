@@ -17,13 +17,14 @@ class App extends React.Component {
     displayTime: '',
     cookies: null,
     launch: {
-      company: 'SpaceX',
-      streamUrl: 'https://www.youtube.com/embed/y4xBFHjkUvw',
-      launchTime: "2020-06-04 02:25",
-      booster: 'Falcon 9',
-      payload: 'Starlink Satellites',
+      company: 'RocketLab',
+      streamUrl: false,
+      launchTime: "2020-06-11 04:43",
+      booster: 'Electron',
+      payload: 'Satellites',
       crewed: false,
-      estimated: false
+      estimated: false,
+      inProgress: false
     }
   }
 
@@ -63,7 +64,11 @@ class App extends React.Component {
     } else if (days === 1) {
       return `in 1d ${hours}h ${minutes}m ${seconds}s`
     } else if (seconds < 1) {
-
+      let launch = this.state.launch;
+      launch.inProgress = true;
+      this.setState({
+        launch
+      })
     } else {
       return `in ${days}d ${hours}h ${minutes}m ${seconds}s`
     }
@@ -103,6 +108,9 @@ class App extends React.Component {
           <Switch>
               <Route exact path="/">
                 <div className='launch-date'>Next launch {this.state.displayTime}</div>
+                <div className="launch-data">
+                  {`The ${this.state.launch.company} ${this.state.launch.booster} ${this.state.launch.inProgress ? 'is' : 'will be'} carrying satellites.`}
+                </div>
                 {this.state.launch && this.state.launch.streamUrl &&
                   <div className='stream-link'>
                     <iframe
@@ -115,7 +123,6 @@ class App extends React.Component {
                       allowfullscreen
                     >
                     </iframe>
-                    {/* <a href="https://www.youtube.com/watch?v=Aymrnzianf0" target='_blank' rel='noopener noreferrer'>Click here for stream!</a> */}
                   </div>
               }
               </Route>
