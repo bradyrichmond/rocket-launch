@@ -8,8 +8,11 @@ import Particles from 'react-particles-js';
 import {
   BrowserRouter as Router,
   Switch,
-  Route
+  Route,
+  PrivateRoute
 } from "react-router-dom";
+
+import AddLaunch from './components/AddLaunch';
 
 class App extends React.Component {
   state = {
@@ -19,13 +22,19 @@ class App extends React.Component {
     launch: {
       company: 'RocketLab',
       streamUrl: false,
+      streamLink: 'https://rocketlabusa.com/live-stream/',
       launchTime: "2020-06-11 04:43",
       booster: 'Electron',
-      payload: 'Satellites',
+      payload: 'satellites',
       crewed: false,
       estimated: false,
-      inProgress: false
-    }
+      landing: false,
+      landingOnDrone: false,
+      droneName: 'Of Course I Still Love You',
+      landingOnLand: false,
+      landingPadName: '39A'
+    },
+    launchInProgress: false
   }
 
   responseGoogle = (resp) => {
@@ -47,6 +56,9 @@ class App extends React.Component {
     let display = moment(this.state.launch.launchTime).utc().diff(moment().utc());
     let displayTime;
     if (display < 0) {
+      this.setState({
+        launchInProgress: true
+      });
       displayTime = "happening now!";
     } else {
       displayTime = this.formatDisplayTime(display);
@@ -59,16 +71,11 @@ class App extends React.Component {
     let hours = moment(time).format("HH");
     let minutes = moment(time).format("mm");
     let seconds = moment(time).format("ss");
+
     if (days < 1) {
       return `in ${hours}h${minutes}m${seconds}s`
     } else if (days === 1) {
       return `in 1d ${hours}h ${minutes}m ${seconds}s`
-    } else if (seconds < 1) {
-      let launch = this.state.launch;
-      launch.inProgress = true;
-      this.setState({
-        launch
-      })
     } else {
       return `in ${days}d ${hours}h ${minutes}m ${seconds}s`
     }
@@ -109,8 +116,12 @@ class App extends React.Component {
               <Route exact path="/">
                 <div className='launch-date'>Next launch {this.state.displayTime}</div>
                 <div className="launch-data">
-                  {`The ${this.state.launch.company} ${this.state.launch.booster} ${this.state.launch.inProgress ? 'is' : 'will be'} carrying satellites.`}
+                  <p>{`The ${this.state.launch.company} ${this.state.launch.booster} ${this.state.launch.inProgress ? 'is' : 'will be'} ${this.state.launch.crewed && this.state.launch.payload ? 'crewed and' : this.state.launch.crewed ? 'crewed' : ''} ${this.state.launch.payload ? 'carrying ' + this.state.launch.payload : ''}`}</p>
+                  {this.state.launch.landing &&
+                    <p>{`The booster will be landing ${this.state.launch.landingOnDrone ? 'on ' + this.state.launch.droneName : 'at ' + this.state.launch.landingPadName}`}</p>
+                  }
                 </div>
+
                 {this.state.launch && this.state.launch.streamUrl &&
                   <div className='stream-link'>
                     <iframe
@@ -124,7 +135,11 @@ class App extends React.Component {
                     >
                     </iframe>
                   </div>
-              }
+                }
+
+                {this.state.launch && this.state.launch.streamLink &&
+                  <div className='above-particles'><a href={this.state.launch.streamLink} target="_blank" rel="noopener noreferrer">Click here for stream!</a></div>
+                }
               </Route>
               <Route path="/login">
                 {!this.state.loggedIn &&
@@ -144,11 +159,7 @@ class App extends React.Component {
                 }
               </Route>
               <Route path="/addlaunch">
-                {this.state.loggedIn &&
-                  <div onClick={this.addLaunch}>
-                    LAUNCH!
-                  </div>
-                }
+                <AddLaunch />
               </Route>
               <Route path="/launchlist">
                 launchlist

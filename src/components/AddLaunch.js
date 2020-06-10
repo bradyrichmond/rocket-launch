@@ -1,44 +1,68 @@
 import React, { Component } from 'react';
-import Formik from 'formik';
-import * as yup from 'yup';
 
 class AddLaunch extends Component {
     state = {
+        values: {
+            company: '',
+            streamUrl: '',
+            launchTime: '',
+            booster: '',
+            payload: '',
 
+        }
     }
-    
+
     handleSubmit = () => {
 
     }
 
-    handleChange = () => {
-
+    handleChange = (e) => {
+        let values = this.state.values;
+        values[e.target.name] = e.target.value;
     }
 
     render() {
         return (
-            <div>
-                <h1>My Form</h1>
-                <Formik
-                initialValues={{ name: 'jared' }}
-                onSubmit={(values, actions) => {
-                    setTimeout(() => {
-                    alert(JSON.stringify(values, null, 2));
-                    actions.setSubmitting(false);
-                    }, 1000);
-                }}
-                >
-                    <form onSubmit={this.handleSubmit}>
+            <div className='add-launch-form'>
+                <form onSubmit={this.handleSubmit}>
                     <input
                         type="text"
                         onChange={this.handleChange}
-                        value={this.values.name}
-                        name="name"
+                        value={this.state.values.company}
+                        name="company"
+                        placeholder="company"
                     />
-                    {this.errors.name && <div id="feedback">{this.errors.name}</div>}
+                    <input
+                        type="text"
+                        onChange={this.handleChange}
+                        value={this.state.values.streamUrl}
+                        name="streamUrl"
+                        placeholder="streamUrl"
+                    />
+                    <input
+                        type="text"
+                        onChange={this.handleChange}
+                        value={this.state.values.launchTime}
+                        name="launchTime"
+                        placeholder="launchTime"
+                    />
+                    <input
+                        type="text"
+                        onChange={this.handleChange}
+                        value={this.state.values.booster}
+                        name="booster"
+                        placeholder="booster"
+                    />
+                    <input
+                        type="text"
+                        onChange={this.handleChange}
+                        value={this.state.values.payload}
+                        name="payload"
+                        placeholder="payload"
+                    />
+                    {/* {this.errors.name && <div id="feedback">{this.errors.name}</div>} */}
                     <button type="submit">Submit</button>
-                    </form>
-                </Formik>
+                </form>
             </div>
         )
     }
