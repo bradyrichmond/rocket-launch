@@ -23,7 +23,7 @@ class App extends React.Component {
       company: 'RocketLab',
       streamUrl: false,
       streamLink: false,
-      launchTime: "2020-06-11 04:43",
+      launchTime: "2020-06-13 04:43",
       booster: 'Electron',
       payload: 'satellites',
       crewed: false,
@@ -33,7 +33,7 @@ class App extends React.Component {
       droneName: 'Of Course I Still Love You',
       landingOnLand: false,
       landingPadName: '39A',
-      scrubbed: true
+      scrubbed: false
     },
     launchInProgress: false
   }
