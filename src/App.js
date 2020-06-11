@@ -22,7 +22,7 @@ class App extends React.Component {
     launch: {
       company: 'RocketLab',
       streamUrl: false,
-      streamLink: 'https://rocketlabusa.com/live-stream/',
+      streamLink: false,
       launchTime: "2020-06-11 04:43",
       booster: 'Electron',
       payload: 'satellites',
@@ -32,7 +32,8 @@ class App extends React.Component {
       landingOnDrone: false,
       droneName: 'Of Course I Still Love You',
       landingOnLand: false,
-      landingPadName: '39A'
+      landingPadName: '39A',
+      scrubbed: true
     },
     launchInProgress: false
   }
@@ -71,6 +72,10 @@ class App extends React.Component {
     let hours = moment(time).format("HH");
     let minutes = moment(time).format("mm");
     let seconds = moment(time).format("ss");
+
+    if (this.state.launch.scrubbed) {
+      return "is scrubbed";
+    }
 
     if (days < 1) {
       return `in ${hours}h${minutes}m${seconds}s`
