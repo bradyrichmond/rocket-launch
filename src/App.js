@@ -14,32 +14,36 @@ import {
 
 import AddLaunch from './components/AddLaunch';
 
+// {
+//   company: 'Default Data',
+//   streamUrl: false,
+//   streamLink: false,
+//   launchTimeString: "2020-06-13 04:43",
+//   launchTimeUnix: 1592023380000,
+//   booster: 'Electron',
+//   payload: 'satellites',
+//   crewed: false,
+//   estimated: false,
+//   landing: false,
+//   landingOnDrone: false,
+//   droneName: 'Of Course I Still Love You',
+//   landingOnLand: false,
+//   landingPadName: '39A',
+//   scrubbed: false
+// }
+
+let NRL_API_URL = process.env.REACT_APP_NRL_API_URL;
 class App extends React.Component {
   state = {
     loggedIn: false,
     displayTime: '',
     cookies: null,
-    launch: {
-      company: 'RocketLab',
-      streamUrl: false,
-      streamLink: false,
-      launchTime: "2020-06-13 04:43",
-      booster: 'Electron',
-      payload: 'satellites',
-      crewed: false,
-      estimated: false,
-      landing: false,
-      landingOnDrone: false,
-      droneName: 'Of Course I Still Love You',
-      landingOnLand: false,
-      landingPadName: '39A',
-      scrubbed: false
-    },
+    launch: {},
     launchInProgress: false
   }
 
   responseGoogle = (resp) => {
-    axios.post(`http://localhost:5000/logincomplete?code=${resp.code}`)
+    axios.post(`${NRL_API_URL}/logincomplete?code=${resp.code}`)
     .then((response) => {
       let d = new Date();
       d.setTime(response.data.expiry_date);
@@ -54,7 +58,7 @@ class App extends React.Component {
   }
 
   setDisplayTime = () => {
-    let display = moment(this.state.launch.launchTime).utc().diff(moment().utc());
+    let display = moment(this.state.launch.launchTimeString).utc().diff(moment().utc());
     let displayTime;
     if (display < 0) {
       this.setState({
@@ -86,9 +90,21 @@ class App extends React.Component {
     }
   }
 
+  getNextLaunch = () => {
+    axios.get(`${NRL_API_URL}/launches/next`)
+    .then((response) => {
+      let launch = response.data;
+      this.setState({launch});
+    })
+    .catch(() => {
+      alert('error fetching next launch');
+    })
+  }
+
   componentDidMount() {
     let cookies = new Cookie();
     this.setState({ cookies });
+    this.getNextLaunch();
     setInterval(this.setDisplayTime, 1000);
   }
 
@@ -136,7 +152,7 @@ class App extends React.Component {
                       src={`${this.state.launch.streamUrl}`}
                       frameborder="0"
                       allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
-                      allowfullscreen
+                      allowfullscreen={true}
                     >
                     </iframe>
                   </div>
