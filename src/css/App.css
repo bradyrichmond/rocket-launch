@@ -45,6 +45,11 @@ p {
   color: #E6E6E6;
   position: relative;
   z-index: 100;
+  height: 20rem;
+}
+
+.launch-tile.main {
+  height: 30rem;
 }
 
 .launch-tile-header {
@@ -125,4 +130,146 @@ p {
 
 .future-launch-container {
   grid-row: 2;
+}
+
+.main-launch-grid-col1 {
+  grid-column-start: 1;
+  grid-column-end: 1;
+  grid-row: 1;
+}
+
+.main-launch-grid-col2 {
+  display: grid;
+  grid-row: 1;
+  position: absolute;
+  right: 0;
+  grid-column-start: 3;
+}
+
+.future-launches-grid {
+  grid-column: 2;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: 7rem auto 7rem;
+  overflow-x: hidden;
+}
+
+.rocket-container {
+  grid-column: 1;
+  grid-row: 1;
+  width: 35rem;
+  height: 35rem;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  transform: scaleX(-1);
+}
+
+.future-launches-header {
+  color: #E6E6E6;
+  font-size: 2rem;
+}
+
+.signature {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  color: #E6E6E6;
+}
+
+/* Tablet and below! */
+
+@media only screen and (max-width: 800px) {
+  html, body {
+    background: url('../images/Rocket.svg'), #2F2E41;
+    background-size: 15rem;
+    background-position: bottom left;
+    background-repeat: no-repeat;
+  }
+
+  #root {
+    padding: 2rem;
+  }
+
+  .app {
+    grid-template-rows: auto auto auto
+  }
+
+  .main-launch-grid {
+    grid-template-columns: auto; 
+  }
+
+  .main-launch-grid-col1 {
+    width: 100%;
+  }
+
+  .launch-tile {
+    min-width: 20rem;
+    padding: 1.5rem;
+  }
+
+  .launch-tile.main {
+    height: 20rem;
+  }
+
+  .launch-tile.main .launch-tile-header {
+    font-size: 2rem;
+  }
+
+  .launch-tile.main .launch-tile-data {
+    font-size: 1.5rem;
+  }
+
+  .launch-tile.main .launch-tile-time {
+    font-size: 3rem;
+  }
+
+  .nrl-header {
+    text-align: center;
+    font-size: 3rem;
+  }
+
+  .main-launch-grid-col2 {
+    display: none;
+  }
+
+  .rocket-container {
+    display: none;
+  }
+
+  .future-launches-outer-container {
+    height: 30rem;
+    grid-template-columns: auto;
+  }
+
+  .future-launches-grid {
+    grid-column-start: 1;
+    grid-column-end: 3;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: 4rem auto 4rem;
+    overflow-x: hidden;
+  }
+
+  .future-launches-inner-container {
+    grid-column: 2;
+    min-width: 20rem;
+  }
+
+  .future-launches-inner-container .launch-tile {
+    margin: 2rem;
+  }
+
+  .future-launches-inner-container .launch-tile:first-of-type {
+    margin-left: 2rem;
+  }
+  
+  .future-launches-inner-container .launch-tile:last-of-type {
+    margin-right: 2rem;
+  }
+
+  .future-launches-header {
+    color: #E6E6E6;
+    font-size: 2rem;
+  }
 }

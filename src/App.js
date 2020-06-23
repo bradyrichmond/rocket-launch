@@ -9,6 +9,7 @@ import rocket from './images/Rocket.svg';
 import circle from './images/circle.svg';
 import left from './images/left.svg';
 import right from './images/right.svg';
+import heart from './images/heart.svg';
 
 // {
 //   company: 'Default Data',
@@ -108,17 +109,18 @@ class App extends React.Component {
     return (
       <div className="App">
         <div className="main-launch-grid">
-          <div style={{gridColumnStart: 1, gridColumnEnd: 1, gridRow: 1}}>
+          <div className="main-launch-grid-col1">
             <p className="nrl-header">Next Rocket Launch</p>
-            <LaunchTile main={true} launch={this.state.launch} height={25} displayTime={this.state.displayTime}/>
+            <LaunchTile main={true} launch={this.state.launch} displayTime={this.state.displayTime}/>
           </div>
-          <div style={{display: 'grid', gridRow: 1, position: 'absolute', right: 0, gridColumnStart: 3}}>
+          <div className="main-launch-grid-col2">
             <div style={{background: `url(${astronaut})`, backgroundSize: 'cover', width: '45rem', height: '45rem'}} />
           </div>
         </div>
         <div className="future-launch-container">
           <FutureLaunches />
         </div>
+        <div className='signature'>Made with <img src={heart} alt='love' style={{height: '1rem', width: '1rem'}}/> by Brady</div>
       </div>
     );
   }
@@ -185,9 +187,34 @@ const generateStars = (width, height) => {
   }
 }
 
+const getWindowDimensions = () => {
+  const { innerWidth: width, innerHeight: height } = window;
+  return {
+    width,
+    height
+  };
+}
+
+const useWindowDimensions = () => {
+  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(getWindowDimensions());
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return windowDimensions;
+}
+
 const LaunchTile = (props) => {
   const [bigStarStyle, setBigStarStyle] = useState({});
   const [smallStarStyle, setSmallStarStyle] = useState({});
+
+  const { width } = useWindowDimensions();
 
   useEffect(() => {
     let { bigStar, littleStar } = generateStars(props.width, props.height);
@@ -196,7 +223,7 @@ const LaunchTile = (props) => {
   }, []);
 
   return (
-    <div className={`launch-tile${props.main ? ' main' : ''}`} style={{width: `${props.width}${props.main ? '%' : 'rem'}`, height: `${props.height}rem`, right: `${props.indexCount * 40}rem`, transition: 'all 1s'}}>
+    <div className={`launch-tile${props.main ? ' main' : ''}`} style={{width: `${props.width}${props.main ? '%' : 'rem'}`, height: `${props.height}rem`, right: width < 800 ? `${props.indexCount * 27}rem` : `${props.indexCount * 44}rem`, transition: 'all 1s'}}>
       <p className="launch-tile-header">{props.launch.company}</p>
       <div className="launch-tile-data">
         <div className="launch-tile-data-item">
@@ -276,8 +303,8 @@ const FutureLaunches = () => {
 
   return (
     <div className={`future-launches-outer-container`} ref={launchContainer}>
-      <div style={{background: `url(${rocket})`, backgroundSize: 'cover', width: '35rem', height: '35rem', position: 'fixed', bottom: '0', left: '0', transform: 'scaleX(-1)', gridColumn: 1, gridRow: 1}} />
-      <div style={{gridColumn: 2, gridRow: 1, display: 'grid', gridTemplateColumns: '7rem auto 7rem', overflowX: 'hidden'}}>
+      <div className='rocket-container' style={{background: `url(${rocket})`, backgroundSize: 'cover'}} />
+      <div className='future-launches-grid'>
         <div style={{gridColumn: 1, height: '100%', background: !showLeftControl ? 'linear-gradient(90deg, rgba(47,46,65,1) 35%, rgba(63,61,86,0) 100%)' : `url(${left}), url(${circle}), linear-gradient(90deg, rgba(47,46,65,1) 35%, rgba(63,61,86,0) 100%)`, backgroundSize: '4rem', backgroundRepeat: 'no-repeat', backgroundPosition: 'left', zIndex: 1000}} onClick={() => { moveLaunches(true) }}/>
         <div className='future-launches-inner-container'>
             {launches && launches.map((launch) => {
