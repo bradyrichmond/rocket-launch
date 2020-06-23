@@ -171,7 +171,7 @@ p {
 }
 
 .signature {
-  position: absolute;
+  position: fixed;
   bottom: 1rem;
   right: 1rem;
   color: #E6E6E6;
@@ -234,7 +234,14 @@ p {
   }
 
   .rocket-container {
-    display: none;
+    grid-column: 1;
+    grid-row: 1;
+    width: 15rem;
+    height: 15rem;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    transform: scaleX(-1);
   }
 
   .future-launches-outer-container {
