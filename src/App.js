@@ -265,6 +265,8 @@ const FutureLaunches = () => {
   const [showRightControl, setShowRightControl] = useState(true);
   const launchContainer = useRef(null)
 
+  const { width } = useWindowDimensions();
+
   const shouldShowControls = () => {
     let containerWidth = launchContainer.current.getBoundingClientRect().width;
     let fullVisibiliityCount = Math.floor(containerWidth / 400);
@@ -305,13 +307,13 @@ const FutureLaunches = () => {
     <div className={`future-launches-outer-container`} ref={launchContainer}>
       <div className='rocket-container' style={{background: `url(${rocket})`, backgroundSize: 'cover'}} />
       <div className='future-launches-grid'>
-        <div style={{gridColumn: 1, height: '100%', background: !showLeftControl ? 'linear-gradient(90deg, rgba(47,46,65,1) 35%, rgba(63,61,86,0) 100%)' : `url(${left}), url(${circle}), linear-gradient(90deg, rgba(47,46,65,1) 35%, rgba(63,61,86,0) 100%)`, backgroundSize: '4rem', backgroundRepeat: 'no-repeat', backgroundPosition: 'left', zIndex: 1000}} onClick={() => { moveLaunches(true) }}/>
+        <div style={{gridColumn: 1, height: '100%', background: !showLeftControl ? 'linear-gradient(90deg, rgba(47,46,65,1) 35%, rgba(63,61,86,0) 100%)' : width > 800 ? `url(${left}), url(${circle}), linear-gradient(90deg, rgba(47,46,65,1) 35%, rgba(63,61,86,0) 100%)` : `url(${left})`, backgroundSize: '4rem', backgroundRepeat: 'no-repeat', backgroundPosition: 'left', zIndex: 1000}} onClick={() => { moveLaunches(true) }}/>
         <div className='future-launches-inner-container'>
             {launches && launches.map((launch) => {
               return (<LaunchTile launch={launch} height={20} width={30} indexCount={launchIndex}/>)
             })}
         </div>
-        <div style={{gridColumn: 3, height: '100%', background: !showRightControl ? 'linear-gradient(270deg, rgba(47,46,65,1) 35%, rgba(63,61,86,0) 100%)' : `url(${right}), url(${circle}), linear-gradient(270deg, rgba(47,46,65,1) 35%, rgba(63,61,86,0) 100%)`, backgroundSize: '4rem', backgroundRepeat: 'no-repeat', backgroundPosition: 'right', zIndex: 1000}} onClick={() => { moveLaunches(false) }}/>
+        <div style={{gridColumn: 3, height: '100%', background: !showRightControl ? 'linear-gradient(270deg, rgba(47,46,65,1) 35%, rgba(63,61,86,0) 100%)' : width > 800 ? `url(${right}), url(${circle}), linear-gradient(270deg, rgba(47,46,65,1) 35%, rgba(63,61,86,0) 100%)` : `url(${right})`, backgroundSize: '4rem', backgroundRepeat: 'no-repeat', backgroundPosition: 'right', zIndex: 1000}} onClick={() => { moveLaunches(false) }}/>
       </div>
     </div>
   )
