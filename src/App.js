@@ -5,7 +5,7 @@ import moment from 'moment';
 import Cookie from 'universal-cookie';
 import astronaut from './images/astronaut_bg.svg';
 import star from './images/star.svg';
-import rocket from './images/rocket.svg';
+import rocket from './images/Rocket.svg';
 import circle from './images/circle.svg';
 import left from './images/left.svg';
 import right from './images/right.svg';
