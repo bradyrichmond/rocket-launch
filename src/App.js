@@ -1,18 +1,14 @@
-import React from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import './css/App.css';
 import axios from 'axios';
-import GoogleLogin from 'react-google-login';
 import moment from 'moment';
 import Cookie from 'universal-cookie';
-import Particles from 'react-particles-js';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  PrivateRoute
-} from "react-router-dom";
-
-import AddLaunch from './components/AddLaunch';
+import astronaut from './images/astronaut_bg.svg';
+import star from './images/star.svg';
+import rocket from './images/rocket.svg';
+import circle from './images/circle.svg';
+import left from './images/left.svg';
+import right from './images/right.svg';
 
 // {
 //   company: 'Default Data',
@@ -82,11 +78,11 @@ class App extends React.Component {
     }
 
     if (days < 1) {
-      return `in ${hours}h${minutes}m${seconds}s`
+      return `T-${hours}h ${minutes}m ${seconds}s`
     } else if (days === 1) {
-      return `in 1d ${hours}h ${minutes}m ${seconds}s`
+      return `T-1d ${hours}h ${minutes}m ${seconds}s`
     } else {
-      return `in ${days}d ${hours}h ${minutes}m ${seconds}s`
+      return `T-${days}d ${hours}h ${minutes}m ${seconds}s`
     }
   }
 
@@ -97,7 +93,7 @@ class App extends React.Component {
       this.setState({launch});
     })
     .catch(() => {
-      alert('error fetching next launch');
+      console.error('error fetching launch')
     })
   }
 
@@ -111,85 +107,187 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <Particles
-          params={{
-            "width": '100%',
-            "height": '100%',
-            "particles": {
-                "number": {
-                    "value": 100
-                },
-                "size": {
-                    "value": 3
-                }
-            },
-            "interactivity": {
-                "events": {
-                    "onhover": {
-                        "enable": true,
-                        "mode": "repulse"
-                    }
-                }
-            }
-        }} />
-        <Router>
-          <Switch>
-              <Route exact path="/">
-                <div className='launch-date'>Next launch {this.state.displayTime}</div>
-                <div className="launch-data">
-                  <p>{`The ${this.state.launch.company} ${this.state.launch.booster} ${this.state.launch.inProgress ? 'is' : 'will be'} ${this.state.launch.crewed && this.state.launch.payload ? 'crewed and' : this.state.launch.crewed ? 'crewed' : ''} ${this.state.launch.payload ? 'carrying ' + this.state.launch.payload : ''}`}</p>
-                  {this.state.launch.landing &&
-                    <p>{`The booster will be landing ${this.state.launch.landingOnDrone ? 'on ' + this.state.launch.droneName : 'at ' + this.state.launch.landingPadName}`}</p>
-                  }
-                </div>
-
-                {this.state.launch && this.state.launch.streamUrl &&
-                  <div className='stream-link'>
-                    <iframe
-                      title="launch-stream"
-                      width="560"
-                      height="315"
-                      src={`${this.state.launch.streamUrl}`}
-                      frameborder="0"
-                      allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
-                      allowfullscreen={true}
-                    >
-                    </iframe>
-                  </div>
-                }
-
-                {this.state.launch && this.state.launch.streamLink &&
-                  <div className='above-particles'><a href={this.state.launch.streamLink} target="_blank" rel="noopener noreferrer">Click here for stream!</a></div>
-                }
-              </Route>
-              <Route path="/login">
-                {!this.state.loggedIn &&
-                  <div className="google-login">
-                    <GoogleLogin
-                      clientId='517580266434-c9en3nf8itaojpvdfs3s7lldpbhoft6c.apps.googleusercontent.com'
-                      render={renderProps => (
-                        <button onClick={renderProps.onClick} disabled={renderProps.disabled}>This is my custom Google button</button>
-                      )}
-                      buttonText="Login"
-                      onSuccess={this.responseGoogle}
-                      onFailure={this.responseGoogle}
-                      cookiePolicy={'single_host_origin'}
-                      responseType='code'
-                    />
-                  </div>
-                }
-              </Route>
-              <Route path="/addlaunch">
-                <AddLaunch />
-              </Route>
-              <Route path="/launchlist">
-                launchlist
-              </Route>
-            </Switch>
-        </Router>
+        <div className="main-launch-grid">
+          <div style={{gridColumnStart: 1, gridColumnEnd: 1, gridRow: 1}}>
+            <p className="nrl-header">Next Rocket Launch</p>
+            <LaunchTile main={true} launch={this.state.launch} height={25} displayTime={this.state.displayTime}/>
+          </div>
+          <div style={{display: 'grid', gridRow: 1, position: 'absolute', right: 0, gridColumnStart: 3}}>
+            <div style={{background: `url(${astronaut})`, backgroundSize: 'cover', width: '45rem', height: '45rem'}} />
+          </div>
+        </div>
+        <div className="future-launch-container">
+          <FutureLaunches />
+        </div>
       </div>
     );
   }
+}
+
+const generateSidePosition = (sideCount, offset, width, height, filter) => {
+  let sides = [ 'top', 'bottom', 'left', 'right'];
+  const sideindex = Math.round(Math.random() * (sideCount - 1));
+  if (filter) {
+    sides = sides.filter((side) => side !== filter);
+  }
+
+  let sideStyle = {};
+  let horizontalPosition;
+  let verticalPosition;
+
+  switch (sides[sideindex]) {
+    case 'top':
+      horizontalPosition = generatePosition(width);
+      sideStyle = {style: {top: offset, left: `${horizontalPosition}rem`}, side: sides[sideindex]};
+      break;
+    case 'bottom':
+      horizontalPosition = generatePosition(width);
+      sideStyle = {style: {bottom: offset, left: `${horizontalPosition}rem`}, side: sides[sideindex]};
+      break;
+    case 'left':
+      verticalPosition = generatePosition(height);
+      sideStyle = {style: {left: offset, top: `${verticalPosition}rem`}, side: sides[sideindex]};
+      break;
+    case 'right':
+      verticalPosition = generatePosition(height);
+      sideStyle = {style: {right: offset, top: `${verticalPosition}rem`}, side: sides[sideindex]};
+      break;
+    default:
+      break;
+  }
+
+  return sideStyle;
+}
+
+const generatePosition = (base) => {
+  return Math.round(Math.random() * base);
+}
+
+const generateStars = (width, height) => {
+  let bigStarPosition = generateSidePosition(4, '-2rem', width, height)
+  let littleStarPosition = generateSidePosition(3, '-1.3rem', width, height, bigStarPosition.side);
+  
+  return {
+    bigStar: Object.assign({}, {
+      background: `url(${star})`,
+      backgroundSize: 'cover',
+      height: '4rem',
+      width: '4rem',
+      position: 'absolute'
+    }, bigStarPosition.style),
+    littleStar: Object.assign({},{
+      background: `url(${star})`,
+      backgroundSize: 'cover',
+      height: '2.6rem',
+      width: '2.6rem',
+      position: 'absolute'
+    }, littleStarPosition.style)
+  }
+}
+
+const LaunchTile = (props) => {
+  const [bigStarStyle, setBigStarStyle] = useState({});
+  const [smallStarStyle, setSmallStarStyle] = useState({});
+
+  useEffect(() => {
+    let { bigStar, littleStar } = generateStars(props.width, props.height);
+    setBigStarStyle(bigStar);
+    setSmallStarStyle(littleStar);
+  }, []);
+
+  return (
+    <div className={`launch-tile${props.main ? ' main' : ''}`} style={{width: `${props.width}${props.main ? '%' : 'rem'}`, height: `${props.height}rem`, right: `${props.indexCount * 40}rem`, transition: 'all 1s'}}>
+      <p className="launch-tile-header">{props.launch.company}</p>
+      <div className="launch-tile-data">
+        <div className="launch-tile-data-item">
+          <p>Booster:</p>
+          <p>{props.launch.booster}</p>
+        </div>
+        <div className="launch-tile-data-item">
+          <p>Payload:</p>
+          <p>{props.launch.payload}</p>
+        </div>
+        <div className="launch-tile-data-item">
+          <p>Launch Date:</p>
+          <p>{props.launch.launchTimeString} UTC</p>
+        </div>
+      </div>
+      <div className="launch-tile-time">
+        {props.displayTime}
+      </div>
+      <div style={bigStarStyle} />
+      <div style={smallStarStyle} />
+    </div>
+  )
+}
+
+const getFutureLaunches = async () => {
+  return axios.get(`${process.env.REACT_APP_NRL_API_URL}/launches`)
+    .then((response) => {
+        return response.data;  
+    })
+    .catch(() => {
+      console.error('error fetching launches');
+    })
+}
+
+const FutureLaunches = () => {
+  const [launches, setLaunches] = useState([]);
+  const [launchIndex, setLaunchIndex] = useState(0);
+  const [showLeftControl, setShowLeftControl] = useState(true);
+  const [showRightControl, setShowRightControl] = useState(true);
+  const launchContainer = useRef(null)
+
+  const shouldShowControls = () => {
+    let containerWidth = launchContainer.current.getBoundingClientRect().width;
+    let fullVisibiliityCount = Math.floor(containerWidth / 400);
+
+    if (launches.length > fullVisibiliityCount) {
+      setShowLeftControl(true);
+      setShowRightControl(true);
+    } else if (launches.length <= fullVisibiliityCount) {
+      setShowLeftControl(false);
+      setShowRightControl(false);
+    }
+  }
+
+  const shouldShowControlsCallback = useCallback(shouldShowControls, []);
+
+  useEffect(() => {
+    const futureLaunches = async () => {
+      let launchList = await getFutureLaunches();
+      setLaunches(launchList);
+    }
+    futureLaunches();
+  }, []);
+
+  const moveLaunches = (left) => {
+    let newLaunchIndex;
+    if (left && showLeftControl && launchIndex < launches.length - 1) {
+      newLaunchIndex = launchIndex + 1;
+    } else if (!left && showRightControl && launchIndex > 0) {
+      newLaunchIndex = launchIndex - 1;
+    }
+
+    if ((newLaunchIndex || newLaunchIndex === 0) && newLaunchIndex !== launchIndex) {
+      setLaunchIndex(newLaunchIndex);
+    }
+  }
+
+  return (
+    <div className={`future-launches-outer-container`} ref={launchContainer}>
+      <div style={{background: `url(${rocket})`, backgroundSize: 'cover', width: '35rem', height: '35rem', position: 'fixed', bottom: '0', left: '0', transform: 'scaleX(-1)', gridColumn: 1, gridRow: 1}} />
+      <div style={{gridColumn: 2, gridRow: 1, display: 'grid', gridTemplateColumns: '7rem auto 7rem', overflowX: 'hidden'}}>
+        <div style={{gridColumn: 1, height: '100%', background: !showLeftControl ? 'linear-gradient(90deg, rgba(47,46,65,1) 35%, rgba(63,61,86,0) 100%)' : `url(${left}), url(${circle}), linear-gradient(90deg, rgba(47,46,65,1) 35%, rgba(63,61,86,0) 100%)`, backgroundSize: '4rem', backgroundRepeat: 'no-repeat', backgroundPosition: 'left', zIndex: 1000}} onClick={() => { moveLaunches(true) }}/>
+        <div className='future-launches-inner-container'>
+            {launches && launches.map((launch) => {
+              return (<LaunchTile launch={launch} height={20} width={30} indexCount={launchIndex}/>)
+            })}
+        </div>
+        <div style={{gridColumn: 3, height: '100%', background: !showRightControl ? 'linear-gradient(270deg, rgba(47,46,65,1) 35%, rgba(63,61,86,0) 100%)' : `url(${right}), url(${circle}), linear-gradient(270deg, rgba(47,46,65,1) 35%, rgba(63,61,86,0) 100%)`, backgroundSize: '4rem', backgroundRepeat: 'no-repeat', backgroundPosition: 'right', zIndex: 1000}} onClick={() => { moveLaunches(false) }}/>
+      </div>
+    </div>
+  )
 }
 
 export default App;
