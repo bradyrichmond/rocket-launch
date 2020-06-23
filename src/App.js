@@ -10,24 +10,8 @@ import circle from './images/circle.svg';
 import left from './images/left.svg';
 import right from './images/right.svg';
 import heart from './images/heart.svg';
-
-// {
-//   company: 'Default Data',
-//   streamUrl: false,
-//   streamLink: false,
-//   launchTimeString: "2020-06-13 04:43",
-//   launchTimeUnix: 1592023380000,
-//   booster: 'Electron',
-//   payload: 'satellites',
-//   crewed: false,
-//   estimated: false,
-//   landing: false,
-//   landingOnDrone: false,
-//   droneName: 'Of Course I Still Love You',
-//   landingOnLand: false,
-//   landingPadName: '39A',
-//   scrubbed: false
-// }
+import stream from './images/stream.png';
+import { findByLabelText } from '@testing-library/react';
 
 let NRL_API_URL = process.env.REACT_APP_NRL_API_URL;
 class App extends React.Component {
@@ -239,8 +223,14 @@ const LaunchTile = (props) => {
           <p>{props.launch.launchTimeString} UTC</p>
         </div>
       </div>
-      <div className="launch-tile-time">
-        {props.displayTime}
+      <div style={{display: 'flex', flexDirection: 'row'}}>
+        <div className="launch-tile-time">
+          {props.displayTime}
+        </div>
+        {(props.main && props.launch.streamLink) && 
+        <div style={{width: '7.5rem', height: '7.5rem', display: 'flex', flexDirection: 'column', alignSelf: 'center'}}>
+          <a href={props.launch.streamLink} rel="noreferrer noopener"><img src={`${stream}`} alt='live stream' style={{width: '100%', height: '100%'}}/></a>
+        </div>}
       </div>
       <div style={bigStarStyle} />
       <div style={smallStarStyle} />
