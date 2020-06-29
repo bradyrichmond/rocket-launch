@@ -210,7 +210,7 @@ const LaunchTile = (props) => {
   }, []);
 
   const runTimeUpdater = () => {
-    setInterval(() => {
+    const getDisplayTime = () => {
       let display = moment(props.launch.launchTimeString).utc().diff(moment().utc());
       let displayTime;
       if (display < 0) {
@@ -220,7 +220,11 @@ const LaunchTile = (props) => {
       }
 
       setSimpleDisplayTime(displayTime);
-    }, 60000)
+    };
+
+    getDisplayTime();
+
+    setInterval(getDisplayTime, 60000);
   }
 
   const formatSimpleDisplayTime = (time) => {
