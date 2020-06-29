@@ -94,6 +94,10 @@ p {
   flex: 1;
 }
 
+.launch-tile-time.small {
+  font-size: 4.5rem;
+}
+
 .absolute-center {
   display: flex;
   align-items: center;

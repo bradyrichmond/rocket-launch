@@ -11,7 +11,7 @@ import left from './images/left.svg';
 import right from './images/right.svg';
 import heart from './images/heart.svg';
 import stream from './images/stream.png';
-import { findByLabelText } from '@testing-library/react';
+import { setIn } from 'formik';
 
 let NRL_API_URL = process.env.REACT_APP_NRL_API_URL;
 class App extends React.Component {
@@ -197,14 +197,45 @@ const useWindowDimensions = () => {
 const LaunchTile = (props) => {
   const [bigStarStyle, setBigStarStyle] = useState({});
   const [smallStarStyle, setSmallStarStyle] = useState({});
+  const [simpleDisplayTime, setSimpleDisplayTime] = useState(false);
 
   const { width } = useWindowDimensions();
+  let timeUpdater;
 
   useEffect(() => {
     let { bigStar, littleStar } = generateStars(props.width, props.height);
     setBigStarStyle(bigStar);
     setSmallStarStyle(littleStar);
+    runTimeUpdater();
   }, []);
+
+  const runTimeUpdater = () => {
+    setInterval(() => {
+      let display = moment(props.launch.launchTimeString).utc().diff(moment().utc());
+      let displayTime;
+      if (display < 0) {
+        displayTime = "happening now!";
+      } else {
+        displayTime = formatSimpleDisplayTime(display);
+      }
+
+      setSimpleDisplayTime(displayTime);
+    }, 60000)
+  }
+
+  const formatSimpleDisplayTime = (time) => {
+    let days = moment(time).format("DD") - 1;
+    let hours = moment(time).format("HH");
+    let minutes = moment(time).format("mm");
+
+    if (days < 1) {
+      return `T-${hours}h ${minutes}m`
+    } else if (days === 1) {
+      return `T-1d ${hours}h`
+    } else {
+      return `T-${days}d ${hours}h`
+    }
+  }
 
   return (
     <div className={`launch-tile${props.main ? ' main' : ''}`} style={{width: `${props.width}${props.main ? '%' : 'rem'}`, height: `${props.height}rem`, right: width < 800 ? `${props.indexCount * 27}rem` : `${props.indexCount * 44}rem`, transition: 'all 1s'}}>
@@ -224,9 +255,12 @@ const LaunchTile = (props) => {
         </div>
       </div>
       <div style={{display: 'flex', flexDirection: 'row'}}>
-        <div className="launch-tile-time">
+        {(props.displayTime && props.main) && <div className="launch-tile-time">
           {props.displayTime}
-        </div>
+        </div>}
+        {(!props.main && simpleDisplayTime) && <div className={`launch-tile-time${!props.main ? ' small' : ''}`}>
+          {simpleDisplayTime}
+        </div>}
         {(props.main && props.launch.streamLink) && 
         <div style={{width: '7.5rem', height: '7.5rem', display: 'flex', flexDirection: 'column', alignSelf: 'center'}}>
           <a href={props.launch.streamLink} rel="noreferrer noopener"><img src={`${stream}`} alt='live stream' style={{width: '100%', height: '100%'}}/></a>
