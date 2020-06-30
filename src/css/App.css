@@ -207,6 +207,14 @@ p {
     padding: 1.5rem;
   }
 
+  .launch-tile-time.small {
+    font-size: 1.5rem;
+  }
+
+  .future-launch-container .launch-tile-header {
+    font-size: 1.5rem;
+  }
+
   .launch-tile.main {
     height: 20rem;
   }
