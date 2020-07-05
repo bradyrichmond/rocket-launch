@@ -3,6 +3,8 @@ import './css/App.css';
 import axios from 'axios';
 import moment from 'moment';
 import Cookie from 'universal-cookie';
+import ReactTooltip from 'react-tooltip';
+
 import astronaut from './images/astronaut_bg.svg';
 import star from './images/star.svg';
 import rocket from './images/Rocket.svg';
@@ -10,8 +12,13 @@ import circle from './images/circle.svg';
 import left from './images/left.svg';
 import right from './images/right.svg';
 import heart from './images/heart.svg';
-import stream from './images/stream.png';
-import { setIn } from 'formik';
+import stream from './images/stream.svg';
+import crewed from './images/crewed.svg';
+import droneship from './images/droneship.svg';
+import recovery from './images/booster_recovery.svg';
+import landing from './images/landing.svg';
+import reused from './images/reused_booster.svg';
+
 
 let NRL_API_URL = process.env.REACT_APP_NRL_API_URL;
 class App extends React.Component {
@@ -39,9 +46,11 @@ class App extends React.Component {
   }
 
   setDisplayTime = () => {
-    let display = moment(this.state.launch.launchTimeString).utc().diff(moment().utc());
+    let momentTime = moment(this.state.launch.launchTimeString).utc();
+    let display = momentTime.diff(moment().utc());
     let displayTime;
-    if (display < 0) {
+    
+    if (momentTime.valueOf() - moment().utc().valueOf() < 0) {
       this.setState({
         launchInProgress: true
       });
@@ -49,6 +58,7 @@ class App extends React.Component {
     } else {
       displayTime = this.formatDisplayTime(display);
     }
+
     this.setState({displayTime});
   }
 
@@ -243,8 +253,8 @@ const LaunchTile = (props) => {
 
   return (
     <div className={`launch-tile${props.main ? ' main' : ''}`} style={{width: `${props.width}${props.main ? '%' : 'rem'}`, height: `${props.height}rem`, right: width < 800 ? `${props.indexCount * 27}rem` : `${props.indexCount * 44}rem`, transition: 'all 1s'}}>
-      <p className="launch-tile-header">{props.launch.company}</p>
       <div className="launch-tile-data">
+        <p className="launch-tile-header">{props.launch.company}</p>
         <div className="launch-tile-data-item">
           <p>Booster:</p>
           <p>{props.launch.booster}</p>
@@ -257,19 +267,56 @@ const LaunchTile = (props) => {
           <p>Launch Date:</p>
           <p>{props.launch.launchTimeString} UTC</p>
         </div>
+        <div style={{display: 'flex', flexDirection: 'row'}}>
+          {(props.displayTime && props.main) && <div className="launch-tile-time">
+            {props.displayTime}
+          </div>}
+          {(!props.main && simpleDisplayTime) && <div className={`launch-tile-time${!props.main ? ' small' : ''}`}>
+            {simpleDisplayTime}
+          </div>}
+        </div>
       </div>
-      <div style={{display: 'flex', flexDirection: 'row'}}>
-        {(props.displayTime && props.main) && <div className="launch-tile-time">
-          {props.displayTime}
-        </div>}
-        {(!props.main && simpleDisplayTime) && <div className={`launch-tile-time${!props.main ? ' small' : ''}`}>
-          {simpleDisplayTime}
-        </div>}
-        {(props.main && props.launch.streamLink) && 
-        <div style={{width: '7.5rem', height: '7.5rem', display: 'flex', flexDirection: 'column', alignSelf: 'center'}}>
-          <a href={props.launch.streamLink} rel="noreferrer noopener"><img src={`${stream}`} alt='live stream' style={{width: '100%', height: '100%'}}/></a>
-        </div>}
-      </div>
+      
+      {(props.main && width > 800) &&
+        <div className='status-container'>
+          <div className={`status-item${props.launch.reused ? '' : ' disabled'}`} data-tip data-for='reused_booster'>
+            <img src={reused} alt={props.launch.reused ? 'booster has been used before' : 'this is the first launch of this booster'}/>
+            <ReactTooltip id='reused_booster' type='light'>
+              <span>{props.launch.reused ? 'booster has been used before' : 'this is the first launch of this booster'}</span>
+            </ReactTooltip>
+          </div>
+          <div className={`status-item${props.launch.recovery ? '' : ' disabled'}`} data-tip data-for='booster_recovery'>
+            <img src={recovery} alt={props.launch.recovery ? 'booster recovery will be attempted' : 'booster recovery will not be attempted'}/>
+            <ReactTooltip id='booster_recovery' type='light'>
+              <span>{props.launch.recovery ? 'booster recovery will be attempted' : 'booster recovery will not be attempted'}</span>
+            </ReactTooltip>
+          </div>
+          <div className={`status-item${props.launch.landingOnDrone ? '' : ' disabled'}`} data-tip data-for='drone_landing'>
+            <img src={droneship} alt={props.launch.landingOnDrone ? `booster will attempt to land on ${props.launch.droneName}` : 'booster will not attempt a droneship landing'}/>
+            <ReactTooltip id='drone_landing' type='light'>
+              <span>{props.launch.landingOnDrone ? `booster will attempt to land on ${props.launch.droneName}` : 'booster will not attempt a droneship landing'}</span>
+            </ReactTooltip>
+          </div>
+          <div className={`status-item${props.launch.landingOnLand ? '' : ' disabled'}`} data-tip data-for='land_landing'>
+            <img src={landing} alt={props.launch.landingOnLand ? 'booster will attempt to land on land' : 'booster will not attempt to land on land'}/>
+            <ReactTooltip id='land_landing' type='light'>
+              <span>{props.launch.landingOnLand ? 'booster will attempt to land on land' : 'booster will not attempt to land on land'}</span>
+            </ReactTooltip>
+          </div>
+          <div className={`status-item${props.launch.crewed ? '' : ' disabled'}`} data-tip data-for='crewed'>
+            <img src={crewed} alt={props.launch.crewed ? 'this launch is crewed' : 'this launch is not crewed'}/>
+            <ReactTooltip id='crewed' type='light'>
+              <span>{props.launch.crewed ? 'this launch is crewed' : 'this launch is not crewed'}</span>
+            </ReactTooltip>
+          </div>
+          <div className={`status-item${props.launch.streamLink ||  props.launch.streamUrl ? '' : ' disabled'}`} data-tip data-for='stream'>
+            <img src={stream} alt={props.launch.streamLink || props.launch.streamUrl ? 'launch will be live streamed' : 'there is no launch stream yet'}/>
+            <ReactTooltip id='stream' type='light'>
+              <span>{props.launch.streamLink || props.launch.streamUrl ? 'launch will be live streamed' : 'there is no launch stream yet'}</span>
+            </ReactTooltip>
+          </div>
+        </div>
+      }
       <div style={bigStarStyle} />
       <div style={smallStarStyle} />
     </div>

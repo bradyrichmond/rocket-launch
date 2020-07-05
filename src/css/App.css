@@ -50,6 +50,29 @@ p {
 
 .launch-tile.main {
   height: 30rem;
+  flex-direction: row;
+}
+
+.launch-tile.main .launch-tile-data {
+  flex: 3;
+}
+
+.launch-tile.main .status-container {
+  flex: 1;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: 30% 30% 30%;
+  gap: 2rem;
+}
+
+.launch-tile.main .status-container .status-item img {
+  width: 100%;
+  height: 100%;
+}
+
+.launch-tile.main .status-container .status-item.disabled img {
+  filter: grayscale(100%);
+  opacity: 0.3;
 }
 
 .launch-tile-header {
@@ -180,6 +203,12 @@ p {
   bottom: 1rem;
   right: 1rem;
   color: #E6E6E6;
+}
+
+@media only screen and (min-width: 800px) and (max-width: 1600px) {
+  .launch-tile-time {
+    font-size: 5rem;
+  } 
 }
 
 /* Tablet and below! */
