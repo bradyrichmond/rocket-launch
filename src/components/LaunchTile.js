@@ -106,8 +106,8 @@ const LaunchTile = (props) => {
     }
   
     const formatSimpleDisplayTime = (time) => {
-      let days = moment(time).format("DD") - 1;
-      let hours = moment(time).format("HH");
+      let days = moment(time).format("DD");
+      let hours = moment(time).add(1, 'hours').format("HH");
       let minutes = moment(time).format("mm");
   
       if (days < 1) {
@@ -178,9 +178,16 @@ const LaunchTile = (props) => {
               </ReactTooltip>
             </div>
             <div className={`status-item${props.launch.streamLink ||  props.launch.streamUrl ? '' : ' disabled'}`} data-tip data-for='stream'>
-              <img src={stream} alt={props.launch.streamLink || props.launch.streamUrl ? 'launch will be live streamed' : 'there is no launch stream yet'}/>
+              {(props.launch.streamLink || props.launch.streamUrl) &&
+                <a href={props.launch.streamLink || props.launch.streamUrl}>
+                  <img src={stream} alt={'launch will be live streamed, click to go to stream'}/>
+                </a>
+              }
+              {(!props.launch.streamLink && !props.launch.streamUrl) &&
+                <img src={stream} alt={'there is no launch stream yet'}/>
+              }
               <ReactTooltip id='stream' type='light'>
-                <span>{props.launch.streamLink || props.launch.streamUrl ? 'launch will be live streamed' : 'there is no launch stream yet'}</span>
+                <span>{props.launch.streamLink || props.launch.streamUrl ? 'launch will be live streamed, click to go to stream' : 'there is no launch stream yet'}</span>
               </ReactTooltip>
             </div>
           </div>

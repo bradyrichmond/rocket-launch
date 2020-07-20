@@ -131,7 +131,6 @@ p {
 .future-launches-outer-container {
   position: relative;
   height: 35rem;
-  margin-top: 3rem;
   display: grid;
   overflow-x: hidden;
 }
@@ -228,6 +227,14 @@ p {
   flex-direction: row;
   justify-content: flex-end;
   margin-bottom: 5rem;
+}
+
+.upcoming-launch-header {
+  margin-left: 8rem;
+  margin-right: 8rem;
+  margin-top: 5rem;
+  color: #E6E6E6;
+  font-size: 5rem;
 }
 
 .reminder-email-container input {

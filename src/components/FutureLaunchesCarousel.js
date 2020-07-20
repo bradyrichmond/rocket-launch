@@ -64,6 +64,7 @@ const getFutureLaunches = async () => {
   
     return (
       <React.Fragment>
+        <p className='upcoming-launch-header'>Upcoming Launches</p>
         {launches && <div className={`future-launches-outer-container`} ref={launchContainer}>
           <div className='future-launches-grid'>
             <div style={{gridColumn: 1, height: '100%', background: !showLeftControl ? 'linear-gradient(90deg, rgba(47,46,65,1) 35%, rgba(63,61,86,0) 100%)' : width > 800 ? `url(${left}), url(${circle}), linear-gradient(90deg, rgba(47,46,65,1) 35%, rgba(63,61,86,0) 100%)` : `url(${left}), url(${circle})`, backgroundSize: '4rem', backgroundRepeat: 'no-repeat', backgroundPosition: 'left', zIndex: 1000}} onClick={() => { moveLaunches(false) }}/>

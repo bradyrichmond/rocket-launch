@@ -56,7 +56,7 @@ class App extends React.Component {
 
   formatDisplayTime = (time) => {
     let days = moment(time).format("DD") - 1;
-    let hours = moment(time).format("HH");
+    let hours = moment(time).add(1, 'hours').format("HH");
     let minutes = moment(time).format("mm");
     let seconds = moment(time).format("ss");
 
